@@ -19,74 +19,44 @@ public class USACO{
         //to test when you are finished with code (this means you need a Scanner!).
         //dw about file instructions cuz he's only inputting valid files
         try{
-          int index = 0;
-          ArrayList<ArrayList<Integer>> board = new ArrayList<>(); //just to initialize
-          String R = "";
-          int C = 0;
-          ArrayList<Integer> values = new ArrayList<>();
-          ArrayList<ArrayList<Integer>> instructions = new ArrayList<>();
           File file = new File(filename);
           Scanner s = new Scanner(file);
+          int index = 0;
+          int R = 0; //to initialize
+          int C = 0;
+          int E = 0;
+          int N = 0;
+          int[][] grid = new int[][]{}; //to initialize
+          ArrayList<Integer[]> instructions = new ArrayList<>();
           while (s.hasNextLine()){
             if (index == 0){
-              String firstLine = s.nextLine();
-              String storer = "";
-              int i = 0;
-              while (i != firstLine.length()){
-                if (firstLine.charAt(i) == ' '){
-                  values.add(Integer.parseInt(storer));
-                  storer = "";
-                } else {
-                  storer+= firstLine.charAt(i);
-                }
-                if (i == firstLine.length() - 1){
-                  values.add(Integer.parseInt(storer));
-                }
-                i++;
-              }
-              R = ""+values.get(0);
-              C = values.get(1);
-              int E = values.get(2);
-              int N = values.get(3);
+              String[] initializer = s.nextLine().split(" ");
+              R = Integer.parseInt(initializer[0]);
+              C = Integer.parseInt(initializer[1]);
+              E = Integer.parseInt(initializer[2]);
+              N = Integer.parseInt(initializer[3]);
+              grid = new int[R][C];
             }
-            else if (index-1 < Integer.parseInt(R)){
-              String boardLine = s.nextLine();
-              board.add(new ArrayList<Integer>());
-              String storer = "";
-              int i = 0;
-              while (i != boardLine.length()){
-                if (boardLine.charAt(i) == ' '){
-                  board.get(index-1).add(Integer.parseInt(storer));
-                  storer = "";
-                } else {
-                  storer+= boardLine.charAt(i);
-                }
-                if (i == boardLine.length() - 1){
-                  board.get(index-1).add(Integer.parseInt(storer));
-                }
-                i++;
+            if (index > 0 && index <= R){
+              String[] gridLine = s.nextLine().split(" ");
+              for (int i = 0; i < gridLine.length; i++){
+                grid[index-1][i] = Integer.parseInt(gridLine[i]); //index-1 is to calibrate the index for grid
               }
             }
-            else {
-              String instructLine = s.nextLine();
-              instructions.add(new ArrayList<Integer>());
-              String storer = "";
-              int i = 0;
-              while (i != instructLine.length()){
-                if (instructLine.charAt(i) == ' '){
-                  instructions.get(index-Integer.parseInt(R)-1).add(Integer.parseInt(storer));
-                  storer = "";
-                } else {
-                  storer+= instructLine.charAt(i);
-                }
-                if (i == instructLine.length() - 1){
-                  instructions.get(index-Integer.parseInt(R)-1).add(Integer.parseInt(storer));
-                }
-                i++;
+            if (index > R){
+              String[] instructValues = s.nextLine().split(" ");
+              Integer[] instructInts = new Integer[4];
+              for (int i = 0; i < instructValues.length; i++){
+                instructInts[i] = Integer.parseInt(instructValues[i]);
               }
+              instructions.add(instructInts);
             }
             index++;
           }
+
+          System.out.println("R: "+R+", C: "+C+", E: "+E+", N: "+N);
+          System.out.println(printArray(grid));
+          System.out.println(instructions);
         } catch (FileNotFoundException e){
           System.out.println("Use a valid file!");
         }
@@ -105,36 +75,81 @@ public class USACO{
           int N = 0; //to initialize
           int M = 0;
           int T = 0;
-          String[][] grid = new String[][]{};
+          char[][] grid = new char[][]{};
+          ArrayList<Integer[]> instructions = new ArrayList<>();
           while (s.hasNext()){
             if (index == 0){
-              N = s.next();
+              N = Integer.parseInt(s.next());
             }
             if (index == 1){
-              M = s.next();
+              M = Integer.parseInt(s.next());
             }
             if (index == 2){
-              T = s.next();
-              grid = new String[N][M];
+              T = Integer.parseInt(s.next());
+              grid = new char[N][M];
             }
             if (index > 2 && index <= 2 + N){
-              grid[index-2] = s.next(); //index-2 is to calibrate index in regards to grid index
+              String gridLine = s.next();
+              for (int i = 0; i < gridLine.length(); i++){
+                //System.out.println("r: "+(index-3)+", c: "+i);
+                grid[index-3][i] = gridLine.charAt(i); //index-3 is to calibrate index in regards to grid index
+              }
             }
-            if (index == 2 + N + 1){
-              
+            if (index >= 2 + N + 1){
+              String[] instructValues = s.next().split(" ");
+              Integer[] instructInts = new Integer[4];
+              for (int i = 0; i < instructValues.length; i++){
+                instructInts[i] = Integer.parseInt(instructValues[i]);
+              }
+              instructions.add(instructInts);
             }
             index++;
-            System.out.println(s.next());
           }
 
-          //System.out.println(values);
-          //System.out.println(board);
+          //System.out.println("N: "+N+", M: "+M+", T: "+T);
+          System.out.println(printArray(grid));
           //System.out.println(instructions);
         } catch (FileNotFoundException e){
           System.out.println("Use a valid file!");
         }
-        //reading in the file is an absolute mess...
         return -1; //dummy value
+    }
+
+    public static String printArray(int[][] array){
+      String ans = "";
+      for (int r = 0; r < array.length; r++){
+        for (int c = 0; c < array[r].length; c++){
+          ans+= array[r][c];
+          if (c != array[r].length - 1){
+            ans+= " ";
+          }
+        }
+        if (r != array.length - 1){
+          ans+= "\n";
+        }
+      }
+      return ans;
+    }
+
+    public static String printArray(char[][] array){
+      String ans = "";
+      for (int r = 0; r < array.length; r++){
+        for (int c = 0; c < array[r].length; c++){
+          ans+= array[r][c];
+          if (c != array[r].length - 1){
+            ans+= " ";
+          }
+        }
+        if (r != array.length - 1){
+          ans+= "\n";
+        }
+      }
+      return ans;
+    }
+
+    public static String printInstructions(ArrayList<Integer[]> array){
+      String ans = "";
+      return ans;
     }
 
 }
