@@ -55,8 +55,8 @@ public class USACO{
           }
 
           //System.out.println("R: "+R+", C: "+C+", E: "+E+", N: "+N);
-          System.out.println(printArray(grid));
-          System.out.println(printInstructions(instructions));
+          //System.out.println(printArray(grid));
+          //System.out.println(printInstructions(instructions));
 
           //now to actually act on the instructions
           int[][] surroundings = new int[][]{
@@ -86,7 +86,7 @@ public class USACO{
               }
             }
             //now to stomp
-            for (int i = 0; i < instructions.get(instruction)[2]; i++){ //instructions.get(instruction)[2] is the # of times to stomp
+            for (int i = 0; i < instructions.get(instruction)[2] && highestElev > 0; i++){ //instructions.get(instruction)[2] is the # of times to stomp
               for (int square = 0; square < 9; square++){
                 int squareR = r + surroundings[square][0];
                 int squareC = c + surroundings[square][1];
@@ -100,12 +100,24 @@ public class USACO{
               }
               highestElev--;
             }
-            System.out.println(printArray(grid)); System.out.println("-------------");
+            //System.out.println(printArray(grid)); System.out.println("-------------");
           }
+
+          //now to calculate depth
+          //calculates aggregated depth
+          int aggreDepth = 0;
+          for (int r = 0; r < R; r++){
+            for (int c = 0; c < C; c++){
+              if (E - grid[r][c] > 0){ //if the lake actually will flood these squares
+                aggreDepth+= E - grid[r][c];
+              }
+            }
+          }
+          return aggreDepth * 72 * 72; //this calculation is cuz each square represents a 6ft by 6ft plot, which is 72in by 72 in
         } catch (FileNotFoundException e){
           System.out.println("Use a valid file!");
         }
-        return -1; //dummy value
+        return -1; //just to compile, actually won't be reached
     }
 
 
@@ -149,14 +161,14 @@ public class USACO{
           }
 
           //System.out.println("R: "+R+", C: "+C+", E: "+E+", N: "+N);
-          System.out.println(printArray(grid));
-          System.out.println(printInstructions(instructions));
+          //System.out.println(printArray(grid));
+          //System.out.println(printInstructions(instructions));
 
-          
+
         } catch (FileNotFoundException e){
           System.out.println("Use a valid file!");
         }
-        return -1; //dummy value
+        return -1; //just to compile
     }
 
 
