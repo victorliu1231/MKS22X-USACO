@@ -4,12 +4,6 @@ import java.util.Scanner;
 import java.util.ArrayList;
 
 public class USACO{
-
-    //*************************************************************** */
-    //WE ARE NOT WRITING TO A FILE. JUST RETURN AN INT AS THE SOLUTION.
-    //cleanup redundant code later
-    //*************************************************************** */
-
     public static int bronze(String filename){
         try{
           //all to initialize the data structure
@@ -194,7 +188,7 @@ public class USACO{
                   }
                 }
               }
-              //assigns the path values in path board
+              //assigns the path values from storage board in path board
               for (int r = 0; r < N; r++){
                 for (int c = 0; c < M; c++){
                   paths[r][c] = storage[r][c];
