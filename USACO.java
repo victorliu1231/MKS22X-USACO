@@ -11,12 +11,6 @@ public class USACO{
     //*************************************************************** */
 
     public static int bronze(String filename){
-        //For this one, here is how you interpret it.
-        //The -- represents the water. So a 4 would be interpreted as 4 in below the water surface.
-        //This means aggregated depth is adding all the different depths together (4 in below surface, 8 in below surface, etc).
-        //Then you multiply that agg.depth by 72 in x 72 in b/c every square represented in the diagram is 6 ft x 6 ft, aka 72 in by 72 in.
-        //Idk if we have to code in the bounds given by the problem.
-        //Use the mini steps along the way in the prompt to help test. Use the files in the test folder
         try{
           //all to initialize the data structure
           File file = new File(filename);
@@ -117,14 +111,11 @@ public class USACO{
         } catch (FileNotFoundException e){
           System.out.println("Use a valid file!");
         }
-        return -1; //just to compile, actually won't be reached
+        return -1; //when invalid files are inputted
     }
 
 
     public static int silver(String filename){
-        //Combinatorics with ability to repeat points lol
-        //recursive backtracking is not a good idea here - takes too long
-        //T is just the total # of seconds to reach the destination - each second, cow moves a square
         try{
           //all the initialize the data structure
           File file = new File(filename);
@@ -133,8 +124,11 @@ public class USACO{
           int N = 0; //to initialize
           int M = 0;
           int T = 0;
+          int startR = 0;
+          int startC = 0;
+          int endR = 0;
+          int endC = 0;
           char[][] grid = new char[][]{};
-          ArrayList<Integer[]> instructions = new ArrayList<>();
           while (s.hasNextLine()){
             if (index == 0){
               String[] initializer = s.nextLine().split(" ");
@@ -150,25 +144,75 @@ public class USACO{
               }
             }
             if (index >= N + 1){
-              String[] instructValues = s.nextLine().split(" ");
-              Integer[] instructInts = new Integer[4];
-              for (int i = 0; i < instructValues.length; i++){
-                instructInts[i] = Integer.parseInt(instructValues[i]);
-              }
-              instructions.add(instructInts);
+              String[] coordinates = s.nextLine().split(" ");
+              startR = Integer.parseInt(coordinates[0]) - 1; //-1's are to calibrate coordinates in test file with array notation
+              startC = Integer.parseInt(coordinates[1]) - 1;
+              endR = Integer.parseInt(coordinates[2]) - 1;
+              endC = Integer.parseInt(coordinates[3]) - 1;
             }
             index++;
           }
 
-          //System.out.println("R: "+R+", C: "+C+", E: "+E+", N: "+N);
+          //System.out.println("N: "+N+", M: "+M+", T: "+T);
           //System.out.println(printArray(grid));
-          //System.out.println(printInstructions(instructions));
+          //System.out.println("startR: "+startR+", startC: "+startC+", endR: "+endR+", endC: "+endC);
 
+          int[][] paths = new int[N][M];
+          int[][] storage = new int[N][M]; //used for storing values when building the paths board so as to not interfere with path board
+          int[][] surroundings = new int[][]{
+            {-1,0},
+            {0,1},
+            {1,0},
+            {0,-1}
+          };
+          for (int t = 1; t <= T; t++){
+            //puts first spot on the board
+            if (t == 1){
+              for (int i = 0; i < 4; i++){
+                 //surroundings[i][0] is the row incrememt. surroundings[i][1] is the col increment
+                if (startR + surroundings[i][0] >= 0 && startR + surroundings[i][0] < N &&
+                    startC + surroundings[i][1] >= 0 && startC + surroundings[i][1] < M &&
+                    grid[startR + surroundings[i][0]][startC + surroundings[i][1]] != '*'){
+                      paths[startR + surroundings[i][0]][startC + surroundings[i][1]] = 1;
+                      storage[startR + surroundings[i][0]][startC + surroundings[i][1]] = 1;
+                }
+              }
+            }
+            else {
+              //stores the path values in storage board
+              for (int r = 0; r < N; r++){
+                for (int c = 0; c < M; c++){
+                  int sumOfSurroundings = 0;
+                  for (int i = 0; i < 4; i++){
+                    if (r + surroundings[i][0] >= 0 && r + surroundings[i][0] < N &&
+                        c + surroundings[i][1] >= 0 && c + surroundings[i][1] < M){ //surroundings[i][0] is the row incrememt. surroundings[i][1] is the col increment
+                      sumOfSurroundings+= paths[r + surroundings[i][0]][c + surroundings[i][1]];
+                    }
+                  }
+                  if (grid[r][c] != '*'){
+                    storage[r][c] = sumOfSurroundings;
+                  }
+                }
+              }
+              //assigns the path values in path board
+              for (int r = 0; r < N; r++){
+                for (int c = 0; c < M; c++){
+                  paths[r][c] = storage[r][c];
+                }
+              }
+            }
+            //System.out.println("t: "+t);
+            //System.out.println(printArray(storage)); System.out.println("---------------");
+          }
+
+          //System.out.println("*************************");
+          //System.out.println(printArray(grid));
+          return paths[endR][endC];
 
         } catch (FileNotFoundException e){
           System.out.println("Use a valid file!");
         }
-        return -1; //just to compile
+        return -1; //when invalid files are inputted
     }
 
 
